@@ -3,7 +3,6 @@ import React from 'react';
 const SearchBar: React.FC = () => {
   return (
     <form className="flex gap-3.5 justify-between p-2 whitespace-nowrap bg-white rounded-lg border border-gray-200 border-solid text-neutral-500">
-      <label htmlFor="search" className="sr-only">Search</label>
       <input
         type="text"
         id="search"

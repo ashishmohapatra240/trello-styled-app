@@ -1,4 +1,4 @@
-import WelcomeComponent from "@/components/WelcomeComponent";
+import WelcomeComponent from "@/components/AuthComponents/WelcomeComponent";
 
 export default function signIn() {
   return (
