@@ -1,8 +1,9 @@
 "use client";
 import React, { useState } from 'react';
 import SidebarLayout from '@/components/SidebarComponents/SidebarLayout';
-import Dashboard from '@/Dashboard';
+import Dashboard from '@/components/DashboardUElements/Dashboard';
 import TaskBoard from '@/components/TaskBoard';
+import TaskDetails from '@/components/TaskDetailsComponents/TaskDetails';
 import { Priority, Todo } from '@/components/types';
 
 export default function DashboardLayout() {
@@ -47,6 +48,8 @@ export default function DashboardLayout() {
     },
   ]);
 
+  const [isTaskDetailsVisible, setIsTaskDetailsVisible] = useState(false);
+
   const handleEdit = (id: number) => {
     console.log(`Editing todo with id: ${id}`);
   };
@@ -86,17 +89,32 @@ export default function DashboardLayout() {
     setTodos(newTodos);
   };
 
+  const handleCreateTaskClick = () => {
+    setIsTaskDetailsVisible(true);
+  };
+
+  const handleCloseTaskDetails = () => {
+    setIsTaskDetailsVisible(false);
+  };
+
   return (
-    <div className="flex">
-      <SidebarLayout />
-      <div className="flex-1 px-8 py-8">
-        <Dashboard userName={userName} />
+    <div className="flex h-screen">
+      <SidebarLayout onCreateTaskClick={handleCreateTaskClick} />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Dashboard userName={userName} onCreateTaskClick={handleCreateTaskClick} />
         <TaskBoard
           todos={todos}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onDragEnd={handleOnDragEnd}
         />
+      </div>
+      <div className={`fixed inset-0 bg-black opacity-50 z-10 ${isTaskDetailsVisible ? 'block' : 'hidden'}`} onClick={handleCloseTaskDetails}></div>
+      <div className={`fixed top-0 right-0 h-full transform transition-transform duration-300 ${isTaskDetailsVisible ? 'translate-x-0' : 'translate-x-full'} z-20`} style={{ width: '100%', maxWidth: '670px' }}>
+        <TaskDetails title="New Task" />
+        <button onClick={handleCloseTaskDetails} className="absolute top-4 right-4">
+          Close
+        </button>
       </div>
     </div>
   );

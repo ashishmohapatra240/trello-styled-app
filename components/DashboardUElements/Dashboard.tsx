@@ -1,15 +1,16 @@
 import React from 'react';
 import Header from './Header';
 import FeatureCard from './FeatureCard';
-import SearchBar from './SearchBar';
+import SearchBar from '../../SearchBar';
 import ActionButton from './ActionButton';
 import CreateNewButton from './CreateNewButton';
 
 interface DashboardProps {
   userName: string;
+  onCreateTaskClick: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ userName }) => {
+const Dashboard: React.FC<DashboardProps> = ({ userName, onCreateTaskClick }) => {
   const features = [
     {
       imageSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/99006e5727a7987d1dc4926ef781fa351deacabe20d386160842d9122113337d?apiKey=9c69169191d441fda0ffa037dc60254e&&apiKey=9c69169191d441fda0ffa037dc60254e",
@@ -53,7 +54,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userName }) => {
               <ActionButton key={index} {...action} />
             ))}
           </div>
-          <CreateNewButton />
+          <CreateNewButton onClick={onCreateTaskClick} />
         </div>
       </section>
     </main>

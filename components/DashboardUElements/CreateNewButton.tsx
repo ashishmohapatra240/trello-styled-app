@@ -1,8 +1,15 @@
 import React from "react";
 
-const CreateNewButton: React.FC = () => {
+interface CreateNewButtonProps {
+  onClick: () => void;
+}
+
+const CreateNewButton: React.FC<CreateNewButtonProps> = ({ onClick }) => {
   return (
-    <button className="flex gap-2 justify-center p-2 font-medium text-white rounded-lg shadow-[0px_1px_8px_rgba(0,0,0,0.25)]">
+    <button
+      className="flex gap-2 justify-center p-2 font-medium text-white rounded-lg shadow-[0px_1px_8px_rgba(0,0,0,0.25)]"
+      onClick={onClick}
+    >
       <span className="my-auto">Create new</span>
       <img
         loading="lazy"
