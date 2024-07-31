@@ -1,21 +1,22 @@
 import React from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import TodoItem from './TodoComponents/TodoItem';
-import { Todo } from './types';
+import { Todo, Status } from './types';
 
 interface TaskBoardProps {
   todos: Todo[];
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
   onDragEnd: (result: any) => void;
+  onCreateTaskClick: (status: Status) => void;
 }
 
-const TaskBoard: React.FC<TaskBoardProps> = ({ todos, onEdit, onDelete, onDragEnd }) => {
+const TaskBoard: React.FC<TaskBoardProps> = ({ todos, onEdit, onDelete, onDragEnd, onCreateTaskClick }) => {
   const columns = [
-    { name: 'To do', status: 'todo' },
-    { name: 'In progress', status: 'in-progress' },
-    { name: 'Under review', status: 'under-review' },
-    { name: 'Finished', status: 'completed' },
+    { name: 'To do', status: Status.Todo },
+    { name: 'In progress', status: Status.InProgress },
+    { name: 'Under review', status: Status.UnderReview },
+    { name: 'Finished', status: Status.Finished },
   ];
 
   return (
@@ -57,7 +58,10 @@ const TaskBoard: React.FC<TaskBoardProps> = ({ todos, onEdit, onDelete, onDragEn
                     </Draggable>
                   ))}
                 {provided.placeholder}
-                <button className="mt-4 w-full py-2 bg-black text-white rounded-lg">
+                <button
+                  className="mt-4 w-full py-2 bg-black text-white rounded-lg"
+                  onClick={() => onCreateTaskClick(column.status)}
+                >
                   Add new
                 </button>
               </div>

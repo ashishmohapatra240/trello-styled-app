@@ -4,7 +4,7 @@ import SidebarLayout from '@/components/SidebarComponents/SidebarLayout';
 import Dashboard from '@/components/DashboardUElements/Dashboard';
 import TaskBoard from '@/components/TaskBoard';
 import TaskDetails from '@/components/TaskDetailsComponents/TaskDetails';
-import { Priority, Todo } from '@/components/types';
+import { Priority, Status, Todo } from '@/components/types';
 
 export default function DashboardLayout() {
   const userName = 'Joe';
@@ -16,7 +16,7 @@ export default function DashboardLayout() {
       description: 'Finish the final report by EOD',
       priority: Priority.Urgent,
       dueDate: '2024-08-01',
-      status: 'todo',
+      status: Status.Todo,
       timeAgo: '2 hours ago',
     },
     {
@@ -25,7 +25,7 @@ export default function DashboardLayout() {
       description: 'Discuss project milestones',
       priority: Priority.Medium,
       dueDate: '2024-08-02',
-      status: 'in-progress',
+      status: Status.InProgress,
       timeAgo: '4 hours ago',
     },
     {
@@ -34,7 +34,7 @@ export default function DashboardLayout() {
       description: 'Review the new feature implementation',
       priority: Priority.Low,
       dueDate: '2024-08-03',
-      status: 'under-review',
+      status: Status.UnderReview,
       timeAgo: '6 hours ago',
     },
     {
@@ -43,12 +43,14 @@ export default function DashboardLayout() {
       description: 'Deploy the latest changes to production',
       priority: Priority.Urgent,
       dueDate: '2024-08-04',
-      status: 'completed',
+      status: Status.Finished,
       timeAgo: '1 day ago',
     },
   ]);
 
   const [isTaskDetailsVisible, setIsTaskDetailsVisible] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState<Status>(Status.Todo);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const handleEdit = (id: number) => {
     console.log(`Editing todo with id: ${id}`);
@@ -56,6 +58,7 @@ export default function DashboardLayout() {
 
   const handleDelete = (id: number) => {
     console.log(`Deleting todo with id: ${id}`);
+    setTodos(todos.filter(todo => todo.id !== id));
   };
 
   const handleOnDragEnd = (result: any) => {
@@ -89,7 +92,8 @@ export default function DashboardLayout() {
     setTodos(newTodos);
   };
 
-  const handleCreateTaskClick = () => {
+  const handleCreateTaskClick = (status: Status) => {
+    setCurrentStatus(status);
     setIsTaskDetailsVisible(true);
   };
 
@@ -97,24 +101,42 @@ export default function DashboardLayout() {
     setIsTaskDetailsVisible(false);
   };
 
+  const handleToggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
+  const handleAddTask = (task: { title: string; description: string; priority: Priority; dueDate: string; status: Status }) => {
+    const newTask: Todo = {
+      ...task,
+      id: todos.length + 1,
+      timeAgo: 'Just now',
+    };
+    setTodos([...todos, newTask]);
+    setIsTaskDetailsVisible(false);
+  };
+
   return (
-    <div className="flex h-screen">
-      <SidebarLayout onCreateTaskClick={handleCreateTaskClick} />
+    <div className="flex flex-col md:flex-row h-screen">
+      <SidebarLayout onCreateTaskClick={() => handleCreateTaskClick(Status.Todo)} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Dashboard userName={userName} onCreateTaskClick={handleCreateTaskClick} />
+        <Dashboard userName={userName} onCreateTaskClick={() => handleCreateTaskClick(Status.Todo)} />
         <TaskBoard
           todos={todos}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onDragEnd={handleOnDragEnd}
+          onCreateTaskClick={handleCreateTaskClick}
         />
       </div>
       <div className={`fixed inset-0 bg-black opacity-50 z-10 ${isTaskDetailsVisible ? 'block' : 'hidden'}`} onClick={handleCloseTaskDetails}></div>
-      <div className={`fixed top-0 right-0 h-full transform transition-transform duration-300 ${isTaskDetailsVisible ? 'translate-x-0' : 'translate-x-full'} z-20`} style={{ width: '100%', maxWidth: '670px' }}>
-        <TaskDetails title="New Task" />
-        <button onClick={handleCloseTaskDetails} className="absolute top-4 right-4">
-          Close
-        </button>
+      <div className={`fixed top-0 right-0 h-full transform transition-transform duration-300 ${isTaskDetailsVisible ? 'translate-x-0' : 'translate-x-full'} ${isFullscreen ? 'w-full' : 'max-w-[670px]'} z-20`}>
+        <TaskDetails
+          title="New Task"
+          onAddTask={handleAddTask}
+          status={currentStatus}
+          onClose={handleCloseTaskDetails}
+          onToggleFullscreen={handleToggleFullscreen}
+        />
       </div>
     </div>
   );

@@ -13,3 +13,10 @@ export enum Priority {
   Medium = 'Medium',
   Low = 'Low'
 }
+
+export enum Status {
+  Todo = 'Todo',
+  InProgress = 'In Progress',
+  UnderReview = 'Under Review',
+  Finished = 'Finished'
+}
