@@ -1,37 +1,71 @@
-import React from "react";
-import TodoList from "./TodoComponents/TodoList";
-import { Todo } from "./types";
+import React from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import TodoItem from './TodoComponents/TodoItem';
+import { Todo } from './types';
 
 interface TaskBoardProps {
   todos: Todo[];
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
+  onDragEnd: (result: any) => void;
 }
 
-const TaskBoard: React.FC<TaskBoardProps> = ({ todos, onEdit, onDelete }) => {
+const TaskBoard: React.FC<TaskBoardProps> = ({ todos, onEdit, onDelete, onDragEnd }) => {
   const columns = [
-    { name: "To do", status: "todo" },
-    { name: "In progress", status: "in-progress" },
-    { name: "Under review", status: "under-review" },
-    { name: "Finished", status: "completed" },
+    { name: 'To do', status: 'todo' },
+    { name: 'In progress', status: 'in-progress' },
+    { name: 'Under review', status: 'under-review' },
+    { name: 'Finished', status: 'completed' },
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-4 p-4">
-      {columns.map((column) => (
-        <div key={column.status} className="bg-gray-100 p-4 rounded-lg">
-          <h2 className="text-xl font-bold mb-4">{column.name}</h2>
-          <TodoList
-            todos={todos.filter((todo) => todo.status === column.status)}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
-          <button className="mt-4 w-full py-2 bg-black text-white rounded-lg">
-            Add new
-          </button>
-        </div>
-      ))}
-    </div>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div className="grid grid-cols-4 gap-4 p-4">
+        {columns.map(column => (
+          <Droppable key={column.status} droppableId={column.status}>
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="bg-gray-100 p-4 rounded-lg"
+              >
+                <h2 className="text-xl font-bold mb-4">{column.name}</h2>
+                {todos
+                  .filter(todo => todo.status === column.status)
+                  .map((todo, index) => (
+                    <Draggable key={todo.id} draggableId={todo.id.toString()} index={index}>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="mb-2"
+                        >
+                          <TodoItem
+                            id={todo.id}
+                            title={todo.title}
+                            description={todo.description}
+                            priority={todo.priority}
+                            dueDate={todo.dueDate}
+                            status={todo.status}
+                            timeAgo={todo.timeAgo}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                {provided.placeholder}
+                <button className="mt-4 w-full py-2 bg-black text-white rounded-lg">
+                  Add new
+                </button>
+              </div>
+            )}
+          </Droppable>
+        ))}
+      </div>
+    </DragDropContext>
   );
 };
 

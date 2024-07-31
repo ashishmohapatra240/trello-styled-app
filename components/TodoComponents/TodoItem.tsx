@@ -35,7 +35,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
       <h3 className="text-base">{title}</h3>
       <p className="mt-1 text-neutral-500">{description}</p>
       <span
-        className={`px-2 py-1.5 w-16 text-xs text-white whitespace-nowrap rounded-lg text-center ${getPriorityColor(
+        className={`px-2 py-1.5 text-xs text-white whitespace-nowrap rounded-lg text-center ${getPriorityColor(
           priority
         )}`}
       >
